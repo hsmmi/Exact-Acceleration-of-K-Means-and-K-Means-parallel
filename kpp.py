@@ -1,6 +1,6 @@
 import numpy as np
 from dataset import Dataset
-from tools import distance, new_seed
+from tools import distance, new_seed, execution_time
 
 
 # algorithm 1 K-Means++
@@ -13,10 +13,11 @@ class kpp:
         self.m = None
         self.K = None
 
+    @execution_time
     def fit(
             self, number_of_cluster: int,
             sample_weight: np.ndarray = None) -> np.ndarray:
-            
+
         self.m = np.empty((0, self.d))
         self.K = number_of_cluster
         assert self.n > self.K,\
