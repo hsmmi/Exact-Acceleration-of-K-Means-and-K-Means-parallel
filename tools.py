@@ -29,5 +29,6 @@ def new_seed(X, L, probability):
     assert len(X.shape) == 2, 'X should be 2-D array'
     assert len(probability.shape) == 2 and probability.shape[1] == 1,\
         'probability should be 2-D array nx1'
-    assert probability.shape[0] == X.shape[0]
+    assert probability.shape[0] == X.shape[0],\
+        'first dimantion on X, L should be the same'
     return X[np.random.choice(range(len(probability)), L, p=probability), :]
