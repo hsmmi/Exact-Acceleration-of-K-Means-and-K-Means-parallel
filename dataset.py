@@ -9,8 +9,6 @@ class Dataset():
         self.sample = None
         self.number_of_feature = None
         self.number_of_sample = None
-        self.number_of_cluster = None
-        self.cluster = None
         if(file is not None):
             self.read_dataset(file)
 
