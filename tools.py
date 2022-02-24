@@ -4,16 +4,16 @@ import numpy as np
 def distance(x: np.ndarray, Y: np.ndarray):
     """
     Parameter:
-        x: 1xd data
-        Y: nxd point(s)
+        x: nxd data(s)
+        Y: mxd point(s)
 
     return
-        d: 1xn ndarray contain distance of data to each point
+        d: nxm ndarray contain distance of data to each point
     """
-    assert len(x.shape) == 2 and x.shape[0] == 1, 'x should be 1xd ndarray'
+    assert len(x.shape) == 2, 'x should be 1xd ndarray'
     assert len(x.shape) == 2 and Y.shape[1] == x.shape[1], \
         'y should be in x space'
-    return np.linalg.norm((x-Y), axis=1)
+    return np.linalg.norm((x[:, np.newaxis, :]-Y), axis=-1)
 
 
 def new_seed(X, L, dist):
