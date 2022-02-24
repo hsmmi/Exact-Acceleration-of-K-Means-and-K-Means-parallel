@@ -1,19 +1,23 @@
 import numpy as np
 
 
-def distance(x: np.ndarray, Y: np.ndarray):
+def distance(X: np.ndarray, Y: np.ndarray):
     """
     Parameter:
-        x: nxd data(s)
+        X: nxd data(s)
         Y: mxd point(s)
 
     return
         d: nxm ndarray contain distance of data to each point
     """
-    assert len(x.shape) == 2, 'x should be 1xd ndarray'
-    assert len(x.shape) == 2 and Y.shape[1] == x.shape[1], \
-        'y should be in x space'
-    return np.linalg.norm((x[:, np.newaxis, :]-Y), axis=-1)
+    if(len(X.shape) == 1):
+        X = X.reshape((1, -1))
+    if(len(Y.shape) == 1):
+        Y = Y.reshape((1, -1))
+    assert len(X.shape) == 2, 'X should be nxd ndarray'
+    assert len(Y.shape) == 2 and Y.shape[1] == X.shape[1], \
+        'y should be in X space'
+    return np.linalg.norm((X[:, np.newaxis, :]-Y), axis=-1)
 
 
 def new_seed(X, L, probability):
