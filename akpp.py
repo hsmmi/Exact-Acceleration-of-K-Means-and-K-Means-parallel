@@ -1,7 +1,9 @@
+from collections import deque
+from tools import distance
 import numpy as np
 from binary_heap import Binary_heap
 from dataset import Dataset
-import heapq
+
 
 class AKPP:
     def __init__(self, dataset: Dataset) -> None:
@@ -16,35 +18,48 @@ class AKPP:
         assert number_of_cluster < self.n,\
             'number of cluster is greater than number of sample'
         self.K = number_of_cluster
-        if(self.w is None):
+        self.m = np.empty((0, self.d))
+        if(sample_weight is None):
             self.w = np.ones((self.n, 1))
         else:
             self.w = sample_weight.reshape((-1, 1))
-        # 1
-        landa = np.random.exponential(scale=1.0, size=(self.n, 1))
-        # 2
+        # line 1 algorithm 2
+        landa = np.random.exponential(scale=1, size=(self.n, 1))
+        # line 2 algorithm 2
         Q = Binary_heap(landa/self.w)
-        # 3
+        # line 3 algorithm 2
         dirty = np.zeros((self.n, 1), dtype=bool)
-        # 4
+        # line 4 algorithm 2
         self.m = np.vstack((self.m, self.X[Q.pop()]))
-        # 5
-        aplha = np.full((self.n, 1), np.inf)
+        # line 5 algorithm 2
+        alpha = np.full((self.n, 1), np.inf)
         phi = np.zeros((self.n, 1))
         gamma = np.full((self.n, 1), np.inf)
-        # 6
-        # for k in range(1, self.K):
-        #     # 7
-        #     for j in range(1, k):
-        #         # 8
-
-        print('pause')
-        while Q:
-            print(Q[0])
-            print(heapq.heappop(Q))
-
-
-dataset = Dataset('dataset/test.csv')
-akpp = AKPP(dataset)
-akpp.fit(10)
-print('pause')
+        # line 6 algorithm 2
+        for k in range(self.K - 1):
+            # line 7 & 8 algorithm 2
+            gamma[:k] = distance(self.m[:-1], self.m[-1])
+            # line 9 algorithm 2
+            for i in range(self.n):
+                # line 10 & 11 algorithm 2
+                if(gamma[int(phi[i][0])] >= 2 * alpha[i]):
+                    continue
+                # line 12 - 14 algorithm 2
+                dis_mk_xi = distance(self.m[k], self.X[i])
+                if(dis_mk_xi < alpha[i]):
+                    alpha[i] = dis_mk_xi
+                    phi[i][0] = k
+                    dirty[i] = True
+            # line 15 - 18 algorithm 2
+            S = deque()
+            while dirty[Q.peek()]:
+                i = Q.pop()
+                S.append(i)
+            # line 19 - 21 algorithm 2
+            for i in S:
+                Q.push(landa[i]/(self.w[i]*(alpha[i]**2)))
+                dirty[i] = False
+            # line 22 algorithm 2
+            self.m = np.vstack((self.m, self.X[Q.pop()]))
+        # line 23 algorithm 2
+        return self.m
