@@ -1,4 +1,6 @@
 import numpy as np
+from functools import wraps
+from time import time
 
 
 def distance(X: np.ndarray, Y: np.ndarray):
@@ -37,3 +39,15 @@ def new_seed(X, L, probability):
         'first dimantion on X, L should be the same'
     return X[np.random.choice(
         range(len(probability)), L, p=probability.flatten()), :]
+
+
+def execution_time(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print(f'func:{f.__name__} took: {te-ts} sec')
+
+        return result
+    return wrap
