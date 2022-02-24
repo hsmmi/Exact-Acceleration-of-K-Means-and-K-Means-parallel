@@ -32,4 +32,4 @@ def new_seed(X, L, probability):
     assert probability.shape[0] == X.shape[0],\
         'first dimantion on X, L should be the same'
     return X[np.random.choice(
-        range(len(probability)), L, p=probability.flatten), :]
+        range(len(probability)), L, p=probability.flatten()), :]
