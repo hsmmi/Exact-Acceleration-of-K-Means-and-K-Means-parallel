@@ -48,4 +48,5 @@ class kpp:
             # line 10 algorithm 1
             m = np.vstack((m, new_seed(self.X, 1, beta)))
         # line 11 algorithm 1
+        self.m = m
         return np.array(m)
