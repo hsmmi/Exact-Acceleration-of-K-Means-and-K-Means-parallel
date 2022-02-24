@@ -10,13 +10,14 @@ class kpp:
         self.n = dataset.number_of_sample
         self.d = dataset.number_of_feature
         self.X = dataset.sample
-        self.m = np.empty((0, self.d))
+        self.m = None
         self.K = None
 
     def fit(
             self, number_of_cluster: int,
             sample_weight: np.ndarray = None) -> np.ndarray:
-
+            
+        self.m = np.empty((0, self.d))
         self.K = number_of_cluster
         assert self.n > self.K,\
             'number of cluster is greater than number of sample'
