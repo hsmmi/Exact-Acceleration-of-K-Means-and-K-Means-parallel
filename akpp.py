@@ -52,12 +52,12 @@ class AKPP:
                     dirty[i] = True
             # line 15 - 18 algorithm 2
             S = deque()
-            while dirty[Q.peek()]:
+            while Q.heap and dirty[Q.peek()]:
                 i = Q.pop()
                 S.append(i)
             # line 19 - 21 algorithm 2
             for i in S:
-                Q.push(landa[i]/(self.w[i]*(alpha[i]**2)))
+                Q.push(landa[i]/(self.w[i]*(alpha[i]**2)), i)
                 dirty[i] = False
             # line 22 algorithm 2
             self.m = np.vstack((self.m, self.X[Q.pop()]))
