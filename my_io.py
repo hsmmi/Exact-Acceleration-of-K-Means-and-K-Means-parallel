@@ -2,7 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 from normalization import clipping, log_scaling, range_min_to_max,\
-     zero_mean_unit_variance
+    zero_mean_unit_variance
 
 
 def read_dataset(file, atr):
@@ -146,7 +146,7 @@ def print_array_with_dataframe(array):
 
 
 def generate_dataset(
-     matrix_size: int, file: str = None) -> np.ndarray:
+        matrix_size: int, file: str = None) -> np.ndarray:
     matrix = np.random.rand(matrix_size, matrix_size)
     adjacency_matrix = matrix / np.sum(matrix)
     if(file is not None):
