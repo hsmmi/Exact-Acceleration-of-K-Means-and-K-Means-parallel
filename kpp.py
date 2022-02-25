@@ -20,8 +20,8 @@ class kpp:
 
         self.m = np.empty((0, self.d))
         self.K = number_of_cluster
-        assert self.n > self.K,\
-            'number of cluster is greater than number of sample'
+        assert self.n > self.K and self.K > 0, \
+            'number of cluster should be in range [1,n)'
 
         if sample_weight:
             self.sample_weight = np.array(sample_weight)
@@ -39,7 +39,7 @@ class kpp:
         while k < self.K:
             # line 5,6 algorithm 1
             alpha = np.minimum(
-                alpha, distance(self.X, m[k-1].reshape((1, -1))))
+                alpha, distance(self.X, m[k-1]))
             # line 7,8 algorithm 1
             t = self.sample_weight*(alpha**2)
             beta = t/np.sum(t)
