@@ -23,7 +23,7 @@ class kpp:
         assert self.n > self.K and self.K > 0, \
             'number of cluster should be in range [1,n)'
 
-        if sample_weight:
+        if sample_weight is not None:
             self.sample_weight = np.array(sample_weight)
         else:
             self.sample_weight = np.ones(self.n)
