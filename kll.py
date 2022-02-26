@@ -80,9 +80,7 @@ class KLL:
                     sum_w_p_i += self.sample_weight[j]
             w_p = np.vstack((w_p, sum_w_p_i))
 
-            w_p = np.vstack((w_p, sum_w_p_i))
-
         # line 14 algorithm 3
-        kpp_ = KPP(Dataset(np.array(self.c)))
+        kpp_ = KPP(Dataset(self.c))
 
         return kpp_.fit(self.K, w_p)
