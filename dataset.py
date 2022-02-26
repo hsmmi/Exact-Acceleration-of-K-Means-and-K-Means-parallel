@@ -4,7 +4,7 @@ import pandas as pd
 
 class Dataset:
     def __init__(self, file: str or np.ndarray = None):
-        """ Just create all the needed variables
+        """Just create all the needed variables
 
         To have and store all thing related to dataset, I create this class
 
@@ -22,7 +22,7 @@ class Dataset:
             self.read_dataset(file)
 
     def read_dataset(self, file: str or np.ndarray):
-        """ Store the data in class
+        """Store the data in class
 
         If you gave it str as file, it'll read dataset from file path
         or if file be ndarray, it'll use the array as samples

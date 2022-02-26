@@ -12,14 +12,24 @@ class AKPP:
         self.d = dataset.number_of_feature
         self.w = None
         self.K = None
-        self.m = np.empty((0, self.d))
+        self.R = None
+        self.L = None
+        self.c = np.empty((0, self.d))
 
-    def fit(self, number_of_cluster: int, sample_weight: np.ndarray = None):
+    def fit(
+        self,
+        number_of_cluster: int,
+        R: int,
+        L: int,
+        sample_weight: np.ndarray = None,
+    ):
         assert (
             number_of_cluster < self.n
         ), "number of cluster is greater than number of sample"
         self.K = number_of_cluster
-        self.m = np.empty((0, self.d))
+        assert R > 0, "Number of round(R) shoud be greater than 0"
+        assert L > 0, "Number of round(L) shoud be greater than 0"
+        self.c = np.empty((0, self.d))
         if sample_weight is None:
             self.w = np.ones((self.n, 1))
         else:
@@ -31,7 +41,7 @@ class AKPP:
         # line 3 algorithm 2
         dirty = np.zeros((self.n, 1), dtype=bool)
         # line 4 algorithm 2
-        self.m = np.vstack((self.m, self.X[Q.pop()]))
+        self.c = np.vstack((self.c, self.X[Q.pop()]))
         # line 5 algorithm 2
         alpha = np.full((self.n, 1), np.inf)
         phi = np.zeros((self.n, 1))
@@ -39,14 +49,14 @@ class AKPP:
         # line 6 algorithm 2
         for k in range(self.K - 1):
             # line 7 & 8 algorithm 2
-            gamma[:k] = distance(self.m[:-1], self.m[-1])
+            gamma[:k] = distance(self.c[:-1], self.c[-1])
             # line 9 algorithm 2
             for i in range(self.n):
                 # line 10 & 11 algorithm 2
                 if gamma[int(phi[i][0])] >= 2 * alpha[i]:
                     continue
                 # line 12 - 14 algorithm 2
-                dis_mk_xi = distance(self.m[k], self.X[i])
+                dis_mk_xi = distance(self.c[k], self.X[i])
                 if dis_mk_xi < alpha[i]:
                     alpha[i] = dis_mk_xi
                     phi[i][0] = k
@@ -61,16 +71,16 @@ class AKPP:
                 Q.push(landa[i] / (self.w[i] * (alpha[i] ** 2)), i)
                 dirty[i] = False
             # line 22 algorithm 2
-            self.m = np.vstack((self.m, self.X[Q.pop()]))
+            self.c = np.vstack((self.c, self.X[Q.pop()]))
         # line 23 algorithm 2
-        return self.m
+        return self.c
 
     def my_fit(self, number_of_cluster: int, sample_weight: np.ndarray = None):
         assert (
             number_of_cluster < self.n
         ), "number of cluster is greater than number of sample"
         self.K = number_of_cluster
-        self.m = np.empty((0, self.d))
+        self.c = np.empty((0, self.d))
         if sample_weight is None:
             self.w = np.ones((self.n, 1))
         else:
@@ -82,7 +92,7 @@ class AKPP:
         # line 3 algorithm 2
         dirty = np.zeros((self.n, 1), dtype=bool)
         # line 4 algorithm 2
-        self.m = np.vstack((self.m, self.X[Q.pop()]))
+        self.c = np.vstack((self.c, self.X[Q.pop()]))
         # line 5 algorithm 2
         alpha = np.full((self.n, 1), np.inf)
         phi = np.zeros((self.n, 1))
@@ -90,14 +100,14 @@ class AKPP:
         # line 6 algorithm 2
         for k in range(self.K - 1):
             # line 7 & 8 algorithm 2
-            gamma[:k] = distance(self.m[:-1], self.m[-1])
+            gamma[:k] = distance(self.c[:-1], self.c[-1])
             # line 9 algorithm 2
             for i in range(self.n):
                 # line 10 & 11 algorithm 2
                 if gamma[int(phi[i][0])] >= 2 * alpha[i]:
                     continue
                 # line 12 - 14 algorithm 2
-                dis_mk_xi = distance(self.m[k], self.X[i])
+                dis_mk_xi = distance(self.c[k], self.X[i])
                 if dis_mk_xi < alpha[i]:
                     alpha[i] = dis_mk_xi
                     phi[i][0] = k
@@ -112,6 +122,6 @@ class AKPP:
                 Q.push(landa[i] / (self.w[i] * (alpha[i] ** 2)), i)
                 dirty[i] = False
             # line 22 algorithm 2
-            self.m = np.vstack((self.m, self.X[Q.pop()]))
+            self.c = np.vstack((self.c, self.X[Q.pop()]))
         # line 23 algorithm 2
-        return self.m
+        return self.c

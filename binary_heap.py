@@ -2,9 +2,9 @@ import heapq
 from numpy import ndarray
 
 
-class BinaryHeap():
+class BinaryHeap:
     def __init__(self, value: ndarray = None) -> None:
-        """ Build binary heap tree
+        """Build binary heap tree
 
         Creates a binary heap tree empty or with your input values
 
@@ -15,7 +15,7 @@ class BinaryHeap():
         heapq.heapify(self.heap)
 
     def push(self, value: int, index: int):
-        """ Build binary heap tree
+        """Build binary heap tree
 
         Args:
             index (int): index of value
@@ -24,7 +24,7 @@ class BinaryHeap():
         heapq.heappush(self.heap, (value, index))
 
     def pop(self):
-        """ Pop the minimum value
+        """Pop the minimum value
 
         Pop the node with minimum value(root) from tree and remove the node
 
@@ -34,7 +34,7 @@ class BinaryHeap():
         return heapq.heappop(self.heap)[1]
 
     def peek(self):
-        """ Peek the minimum value
+        """Peek the minimum value
 
         Peek the node with minimum value(root) from tree but node
         still is in tree

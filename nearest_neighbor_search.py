@@ -6,7 +6,7 @@ def euclidean(p1: tuple, p2: tuple) -> float:
     return np.linalg.norm(p1[0] - p2[0])
 
 
-class Point():
+class Point:
     def __init__(self, loc: np.ndarray, index: int) -> None:
         self.loc = loc
         self.index = index
@@ -14,7 +14,7 @@ class Point():
 
 class NNS:
     def __init__(self, points: np.ndarray or vptree.VPTree) -> None:
-        """ To find nearest neighbor in O(log n)
+        """To find nearest neighbor in O(log n)
 
         Build Vantage Point-tree (VP-tree) from you points
 
@@ -33,7 +33,7 @@ class NNS:
 
     # line 1 algorithm 4
     def get_child(self, low: bool):
-        """ Return a child of root
+        """Return a child of root
 
         If low be True then return the left child otherwise
         return the right child
@@ -58,13 +58,13 @@ class NNS:
             a, b = self.tree.right_min, self.tree.right_max
 
         # line 10 algorithm 4
-        if(a - tau < r and r < b + tau):
+        if a - tau < r and r < b + tau:
             return True
         return False
 
     # line 11 algorithm 4
     def best(self, tau: float, tau_p: float, id: tuple, id_p: tuple):
-        """ Which one is closer?
+        """Which one is closer?
 
         If low be True then return the left child otherwise
         return the right child
@@ -107,7 +107,7 @@ class NNS:
 
     # line 27 algorithm 4
     def nearest_in_range(self, q: np.ndarray, max_range: float):
-        """ Get point q and find closest point in range max range
+        """Get point q and find closest point in range max range
 
         Args:
             q (ndarray): one sample in space

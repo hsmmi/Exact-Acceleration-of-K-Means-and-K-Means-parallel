@@ -5,11 +5,11 @@ from time import time
 
 def distance(X: np.ndarray, Y: np.ndarray):
     """
-    Parameter:
+    Parameters:
         X: nxd data(s)
         Y: mxd point(s)
 
-    return
+    Returns:
         d: nxm ndarray contain distance of data to each point
     """
     if len(X.shape) == 1:
@@ -17,8 +17,9 @@ def distance(X: np.ndarray, Y: np.ndarray):
     if len(Y.shape) == 1:
         Y = Y.reshape((1, -1))
     assert len(X.shape) == 2, "X should be nxd ndarray"
-    assert len(
-        Y.shape) == 2 and Y.shape[1] == X.shape[1], "y should be in X space"
+    assert (
+        len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
+    ), "y should be in X space"
     return np.linalg.norm((X[:, np.newaxis, :] - Y), axis=-1)
 
 

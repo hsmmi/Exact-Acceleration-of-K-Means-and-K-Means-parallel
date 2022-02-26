@@ -9,7 +9,7 @@ def zero_mean_unit_variance(mat):
     first decrease all elements by their column mean and then divide it by
     their column variance
     """
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         return (mat - mat.mean(axis=0)) / mat.std(axis=0)
 
 
@@ -23,9 +23,10 @@ def range_min_to_max(mat, newMin, newMax):
         few or no outliers.
     .   Your data is approximately uniformly distributed across that range.
     """
-    with np.errstate(divide='ignore', invalid='ignore'):
-        return ((mat - mat.min(axis=0)) / (mat.max(axis=0) - mat.min(axis=0)) *
-                (newMax - newMin) + newMin)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return (mat - mat.min(axis=0)) / (
+            mat.max(axis=0) - mat.min(axis=0)
+        ) * (newMax - newMin) + newMin
 
 
 def clipping(mat, newMin, newMax):
