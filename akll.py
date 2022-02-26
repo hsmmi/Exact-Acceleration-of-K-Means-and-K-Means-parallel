@@ -1,7 +1,7 @@
-from collections import deque
-from tools import distance
+from kpp import kpp
+from nearest_neighbor_search import NNS
+from tools import distance, new_seed
 import numpy as np
-from binary_heap import BinaryHeap
 from dataset import Dataset
 
 
@@ -29,99 +29,58 @@ class AKPP:
         self.K = number_of_cluster
         assert R > 0, "Number of round(R) shoud be greater than 0"
         assert L > 0, "Number of round(L) shoud be greater than 0"
-        self.c = np.empty((0, self.d))
-        if sample_weight is None:
-            self.w = np.ones((self.n, 1))
-        else:
-            self.w = sample_weight.reshape((-1, 1))
-        # line 1 algorithm 2
-        landa = np.random.exponential(scale=1, size=(self.n, 1))
-        # line 2 algorithm 2
-        Q = BinaryHeap(landa / self.w)
-        # line 3 algorithm 2
-        dirty = np.zeros((self.n, 1), dtype=bool)
-        # line 4 algorithm 2
-        self.c = np.vstack((self.c, self.X[Q.pop()]))
-        # line 5 algorithm 2
-        alpha = np.full((self.n, 1), np.inf)
-        phi = np.zeros((self.n, 1))
-        gamma = np.full((self.n, 1), np.inf)
-        # line 6 algorithm 2
-        for k in range(self.K - 1):
-            # line 7 & 8 algorithm 2
-            gamma[:k] = distance(self.c[:-1], self.c[-1])
-            # line 9 algorithm 2
-            for i in range(self.n):
-                # line 10 & 11 algorithm 2
-                if gamma[int(phi[i][0])] >= 2 * alpha[i]:
-                    continue
-                # line 12 - 14 algorithm 2
-                dis_mk_xi = distance(self.c[k], self.X[i])
-                if dis_mk_xi < alpha[i]:
-                    alpha[i] = dis_mk_xi
-                    phi[i][0] = k
-                    dirty[i] = True
-            # line 15 - 18 algorithm 2
-            S = deque()
-            while Q.heap and dirty[Q.peek()]:
-                i = Q.pop()
-                S.append(i)
-            # line 19 - 21 algorithm 2
-            for i in S:
-                Q.push(landa[i] / (self.w[i] * (alpha[i] ** 2)), i)
-                dirty[i] = False
-            # line 22 algorithm 2
-            self.c = np.vstack((self.c, self.X[Q.pop()]))
-        # line 23 algorithm 2
-        return self.c
 
-    def my_fit(self, number_of_cluster: int, sample_weight: np.ndarray = None):
-        assert (
-            number_of_cluster < self.n
-        ), "number of cluster is greater than number of sample"
-        self.K = number_of_cluster
         self.c = np.empty((0, self.d))
+
         if sample_weight is None:
             self.w = np.ones((self.n, 1))
         else:
             self.w = sample_weight.reshape((-1, 1))
-        # line 1 algorithm 2
-        landa = np.random.exponential(scale=1, size=(self.n, 1))
-        # line 2 algorithm 2
-        Q = BinaryHeap(landa / self.w)
+
+        # line 1 algorithm 5
+        beta = self.w / np.sum(self.w)
+        # line 2 algorithm 5
+        self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
         # line 3 algorithm 2
-        dirty = np.zeros((self.n, 1), dtype=bool)
-        # line 4 algorithm 2
-        self.c = np.vstack((self.c, self.X[Q.pop()]))
-        # line 5 algorithm 2
+        # In each iteration new centers are in c(k_pre, k]
+        # k always point to last center
         alpha = np.full((self.n, 1), np.inf)
-        phi = np.zeros((self.n, 1))
-        gamma = np.full((self.n, 1), np.inf)
-        # line 6 algorithm 2
-        for k in range(self.K - 1):
-            # line 7 & 8 algorithm 2
-            gamma[:k] = distance(self.c[:-1], self.c[-1])
-            # line 9 algorithm 2
+        k_pre, k = -1, 0
+        # line 4 algorithm 2
+        for r in range(R):
+            # line 5 algorithm 2
+            C = NNS(
+                self.c[k_pre + 1 : k + 1],
+                np.arange(start=k_pre + 1, stop=k + 1),
+            )
+            # line 6 - 9 algorithm 2
             for i in range(self.n):
-                # line 10 & 11 algorithm 2
-                if gamma[int(phi[i][0])] >= 2 * alpha[i]:
-                    continue
-                # line 12 - 14 algorithm 2
-                dis_mk_xi = distance(self.c[k], self.X[i])
-                if dis_mk_xi < alpha[i]:
-                    alpha[i] = dis_mk_xi
-                    phi[i][0] = k
-                    dirty[i] = True
-            # line 15 - 18 algorithm 2
-            S = deque()
-            while Q.heap and dirty[Q.peek()]:
-                i = Q.pop()
-                S.append(i)
-            # line 19 - 21 algorithm 2
-            for i in S:
-                Q.push(landa[i] / (self.w[i] * (alpha[i] ** 2)), i)
-                dirty[i] = False
-            # line 22 algorithm 2
-            self.c = np.vstack((self.c, self.X[Q.pop()]))
-        # line 23 algorithm 2
-        return self.c
+                dis, j = C.nearest_in_range(self.X[i], alpha[i])
+                if j >= 0:
+                    alpha[i] = dis
+            # line 10 algorithm 2
+            k_pre = k
+            Z = np.sum(self.w * (alpha**2))
+            # line 11 algorithm 2
+            for i in range(self.n):
+                p = min(1, self.L * self.w[i] * (alpha[i] ** 2) / Z)
+                # line 12 algorithm 2
+                if p > np.random.rand(1)[0]:
+                    # X[i] become new center
+                    # line 14 algorithm 2
+                    k = k + 1
+                    self.c = np.vstack((self.c, self.X[i]))
+                    alpha[i] = 0
+
+        # line 14 algorithm 2
+        w_p = np.empty((0, 1))
+        dist_center_point = distance(self.c, self.X)
+        for i in range(self.c.shape[0]):
+            sum_w_p_i = 0
+            for j in range(self.n):
+                if dist_center_point[i, j]:
+                    sum_w_p_i += self.w[j]
+            w_p = np.vstack((w_p, sum_w_p_i))
+
+        # line 15 algorithm 2
+        return kpp(self.K, self.c, w_p)

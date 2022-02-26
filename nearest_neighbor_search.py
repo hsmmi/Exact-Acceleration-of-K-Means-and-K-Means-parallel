@@ -13,7 +13,9 @@ class Point:
 
 
 class NNS:
-    def __init__(self, points: np.ndarray or vptree.VPTree) -> None:
+    def __init__(
+        self, points: np.ndarray or vptree.VPTree, id: np.ndarray = None
+    ) -> None:
         """To find nearest neighbor in O(log n)
 
         Build Vantage Point-tree (VP-tree) from you points
@@ -26,7 +28,10 @@ class NNS:
             points(ndarray|VPTree)
         """
         if type(points) == np.ndarray:
-            points = list(zip(points, range(points.shape[0])))
+            if id is None:
+                points = list(zip(points, range(points.shape[0])))
+            else:
+                points = list(zip(points, id))
             self.tree = vptree.VPTree(points, euclidean)
         else:
             self.tree = points
@@ -103,7 +108,7 @@ class NNS:
             tau_p, id_p = self.get_child(not low).nearest(q, tau)
             tau, id = self.best(tau, tau_p, id, id_p)
         # line 26 algorithm 4
-        return tau, id
+        return tau, id[1]
 
     # line 27 algorithm 4
     def nearest_in_range(self, q: np.ndarray, max_range: float):
@@ -115,8 +120,8 @@ class NNS:
                 euclidean distance
 
         Returns:
-            ret (distance, (point, id)): ret[0] is distance point form q
-            ret[1][0] is the closest point to q with is ret[1][1]
+            ret (distance, id): ret[0] is distance nearest point form q
+            ret[1] is id of nearest point
         """
         # line 28 algorithm 4
         return self.nearest((q, -1), max_range)
