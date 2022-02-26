@@ -50,7 +50,7 @@ def execution_time(f):
         ts = time()
         result = f(*args, **kw)
         te = time()
-        print(f"func:{f.__name__} took: {te-ts} sec")
+        print(f"func:{f.__qualname__} took: {te-ts} sec")
 
         return result
 
