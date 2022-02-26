@@ -1,6 +1,6 @@
 from kpp import KPP
 from nearest_neighbor_search import NNS
-from tools import distance, new_seed
+from tools import distance, execution_time, new_seed
 import numpy as np
 from dataset import Dataset
 
@@ -16,6 +16,7 @@ class AKLL:
         self.L = None
         self.c = np.empty((0, self.d))
 
+    @execution_time
     def fit(
         self,
         number_of_cluster: int,
