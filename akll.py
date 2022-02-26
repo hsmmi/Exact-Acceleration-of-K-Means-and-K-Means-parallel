@@ -52,49 +52,49 @@ class AKLL:
         beta = self.w / np.sum(self.w)
         # line 2 algorithm 5
         self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
-        # line 3 algorithm 2
+        # line 3 algorithm 5
         # In each iteration new centers are in c(k_pre, k]
         # k always point to last center
         alpha = np.full((self.n, 1), np.inf)
         k_pre, k = -1, 0
-        # line 4 algorithm 2
+        # line 4 algorithm 5
         for r in range(R):
             if k - (k_pre + 1) + 1 > 0:  # we create center in previous round
-                # line 5 algorithm 2
+                # line 5 algorithm 5
                 C = NNS(
                     self.c[k_pre + 1 : k + 1],
                     np.arange(start=k_pre + 1, stop=k + 1),
                 )
-                # line 6 - 9 algorithm 2
+                # line 6 - 9 algorithm 5
                 for i in range(self.n):
                     dis, j = C.nearest_in_range(self.X[i], alpha[i])
                     if j >= 0:
                         alpha[i] = dis
-            # line 10 algorithm 2
+            # line 10 algorithm 5
             k_pre = k
             Z = np.sum(self.w * (alpha**2))
-            # line 11 algorithm 2
+            # line 11 algorithm 5
             for i in range(self.n):
                 p = min(1, self.L * self.w[i] * (alpha[i] ** 2) / Z)
-                # line 12 algorithm 2
+                # line 12 algorithm 5
                 if p > np.random.rand(1)[0]:
                     # X[i] become new center
-                    # line 14 algorithm 2
+                    # line 14 algorithm 5
                     k = k + 1
                     self.c = np.vstack((self.c, self.X[i]))
                     alpha[i] = 0
 
-        # line 14 algorithm 2
+        # line 14 algorithm 5
         w_p = np.empty((0, 1))
         dist_center_point = distance(self.c, self.X)
         for i in range(self.c.shape[0]):
             sum_w_p_i = 0
             for j in range(self.n):
-                if dist_center_point[i, j]:
+                if dist_center_point[i, j] == alpha[j]:
                     sum_w_p_i += self.w[j]
             w_p = np.vstack((w_p, sum_w_p_i))
 
-        # line 15 algorithm 2
+        # line 15 algorithm 5
         dataset_center = Dataset(self.c)
         kpp = KPP(dataset_center)
         return kpp.fit(self.K, w_p)

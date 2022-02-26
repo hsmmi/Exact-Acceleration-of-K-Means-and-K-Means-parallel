@@ -44,42 +44,45 @@ class KLL:
         # line 1 algorithm 3
         beta = self.sample_weight / np.sum(self.sample_weight)
         # line 2 algorithm 3
-        c = np.vstack((self.c, new_seed(self.X, 1, beta)))
+        self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
         # line 3 algorithm 3
-        alpha = np.array([np.inf] * self.n).reshape((-1, 1))
-        k = 1
-        kp = 0
+        alpha = np.full((self.n, 1), np.inf)
+        k = 0
+        k_p = -1
         # line 4,5,6 algorithm 3
         for r in range(self.R):
             for i in range(self.n):
-                for j in range(kp, k):
+                for j in range(k_p + 1, k + 1):
                     # line 7 algorithm 3
-                    alpha[i] = np.minimum(alpha[i], distance(self.X[i], c[j]))
+                    alpha[i] = min(alpha[i], distance(self.X[i], self.c[j]))
 
             # line 8,9 algorithm 3
-            kp = k
-            t = self.sample_weight * (alpha**2)
-            z = np.sum(t)
+            k_p = k
+            Z = np.sum(self.sample_weight * (alpha**2))
             # line 10,11,12 algorithm 3
             for i in range(self.n):
-                p = self.L * self.sample_weight[i] * (alpha[i] ** 2) / z
+                p = min(
+                    1, self.L * self.sample_weight[i] * (alpha[i] ** 2) / Z
+                )
                 if p > np.random.rand(1)[0]:
                     k += 1
-                    c = np.vstack((c, self.X[i]))
+                    self.c = np.vstack((self.c, self.X[i]))
                     alpha[i] = 0
 
         # line 13 algorithm 3
-        wp = np.empty((0, 1))
-        for i in range(c.shape[0]):
-            s = 0
+        w_p = np.empty((0, 1))
+
+        dist_center_point = distance(self.c, self.X)
+        for i in range(self.c.shape[0]):
+            sum_w_p_i = 0
             for j in range(self.n):
-                wj = self.sample_weight[j]
-                indic = 1 if distance(self.X[j], c[i]) == alpha[j] else 0
-                s += wj * indic
+                if dist_center_point[i, j] == alpha[j]:
+                    sum_w_p_i += self.sample_weight[j]
+            w_p = np.vstack((w_p, sum_w_p_i))
 
-            wp = np.vstack((wp, s))
-        self.c = c
+            w_p = np.vstack((w_p, sum_w_p_i))
+
         # line 14 algorithm 3
-        kpp_ = KPP(Dataset(np.array(c)))
+        kpp_ = KPP(Dataset(np.array(self.c)))
 
-        return kpp_.fit(self.K, wp)
+        return kpp_.fit(self.K, w_p)
