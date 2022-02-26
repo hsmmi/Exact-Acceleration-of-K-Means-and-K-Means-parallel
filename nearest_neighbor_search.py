@@ -1,4 +1,3 @@
-from typing import List
 import numpy as np
 import vptree
 
@@ -64,23 +63,21 @@ class NNS:
         return False
 
     # line 11 algorithm 4
-    def best(
-            self, tau: float, tau_p: float, id: tuple, id_p: tuple
-    ) -> List[float, tuple]:
+    def best(self, tau: float, tau_p: float, id: tuple, id_p: tuple):
         """ Which one is closer?
 
-          If low be True then return the left child otherwise
-          return the right child
+        If low be True then return the left child otherwise
+        return the right child
 
-          Args:
-              tau (float): distance id from root
-              tau_p (float): distance id_p from root
-              id (tuple): is a point
-              id_p (tuple): is a point
+        Args:
+            tau (float): distance id from root
+            tau_p (float): distance id_p from root
+            id (tuple): is a point
+            id_p (tuple): is a point
 
-          Returns:
-              tau (float)
-          """
+        Returns:
+            tau (float)
+        """
         # line 12 - 14 algorithm 4
         if tau < tau_p:
             return tau, id
@@ -109,6 +106,17 @@ class NNS:
         return tau, id
 
     # line 27 algorithm 4
-    def nearest_in_range(self, q, max_range):
+    def nearest_in_range(self, q: np.ndarray, max_range: float):
+        """ Get point q and find closest point in range max range
+
+        Args:
+            q (ndarray): one sample in space
+            max_range (float): in range max_range from q with
+                euclidean distance
+
+        Returns:
+            ret (distance, (point, id)): ret[0] is distance point form q
+            ret[1][0] is the closest point to q with is ret[1][1]
+        """
         # line 28 algorithm 4
         return self.nearest((q, -1), max_range)
