@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 import vptree
 
@@ -6,8 +7,25 @@ def euclidean(p1: tuple, p2: tuple) -> float:
     return np.linalg.norm(p1[0] - p2[0])
 
 
-class nns:
+class Point():
+    def __init__(self, loc: np.ndarray, index: int) -> None:
+        self.loc = loc
+        self.index = index
+
+
+class NNS:
     def __init__(self, points: np.ndarray or vptree.VPTree) -> None:
+        """ To find nearest neighbor in O(log n)
+
+        Build Vantage Point-tree (VP-tree) from you points
+
+        Points can be ndarray, it'll build VPTree with each point
+        like (point, id)
+        or be VPTree that module will use it as tree
+
+        Args:
+            points(ndarray|VPTree)
+        """
         if type(points) == np.ndarray:
             points = list(zip(points, range(points.shape[0])))
             self.tree = vptree.VPTree(points, euclidean)
@@ -16,10 +34,21 @@ class nns:
 
     # line 1 algorithm 4
     def get_child(self, low: bool):
+        """ Return a child of root
+
+        If low be True then return the left child otherwise
+        return the right child
+
+        Args:
+            low (bool): can be True or False
+
+        Returns:
+            child (NNS): on of the root child depends on arg(low)
+        """
         # line 2 - 4 algorithm 4
         if low is True:
-            return nns(self.tree.left)
-        return nns(self.tree.right)
+            return NNS(self.tree.left)
+        return NNS(self.tree.right)
 
     # line 5 algorithm 4
     def search(self, r: float, tau: float, low: bool):
@@ -35,14 +64,30 @@ class nns:
         return False
 
     # line 11 algorithm 4
-    def best(self, tau: float, tau_p: float, id: tuple, id_p: tuple):
+    def best(
+            self, tau: float, tau_p: float, id: tuple, id_p: tuple
+    ) -> List[float, tuple]:
+        """ Which one is closer?
+
+          If low be True then return the left child otherwise
+          return the right child
+
+          Args:
+              tau (float): distance id from root
+              tau_p (float): distance id_p from root
+              id (tuple): is a point
+              id_p (tuple): is a point
+
+          Returns:
+              tau (float)
+          """
         # line 12 - 14 algorithm 4
         if tau < tau_p:
             return tau, id
         return tau_p, id_p
 
     # line 15 algorithm 4
-    def nearest(self, q: tuple, tau: float):
+    def nearest(self, q: tuple, tau: float) -> tuple:
         # line 16 algorithm 4
         p = self.tree.vp
         r = euclidean(p, q)
