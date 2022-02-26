@@ -61,9 +61,6 @@ class AKLL:
         for r in range(R):
             if k - (k_pre + 1) + 1 > 0:  # we create center in previous round
                 # line 5 algorithm 2
-                print(
-                    f"int round {r} new centers are\n{self.c[k_pre + 1 : k + 1]}\n\n"
-                )
                 C = NNS(
                     self.c[k_pre + 1 : k + 1],
                     np.arange(start=k_pre + 1, stop=k + 1),
