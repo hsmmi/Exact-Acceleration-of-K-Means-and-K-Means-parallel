@@ -39,7 +39,7 @@ def new_seed(X, L, probability):
     ), "probability should be 2-D array nx1"
     assert (
         probability.shape[0] == X.shape[0]
-    ), "first dimantion on X, L should be the same"
+    ), "first dimantion on X, probability should be the same"
     probability = probability.flatten()
     return X[np.random.choice(range(len(probability)), L, p=probability), :]
 

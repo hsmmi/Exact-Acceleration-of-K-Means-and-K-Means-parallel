@@ -1,11 +1,11 @@
 import numpy as np
 from dataset import Dataset
 from tools import distance, new_seed, execution_time
-import kpp
+from kpp import KPP
 
 
 # algorithm 3 K-Means ||
-class kll:
+class KLL:
     def __init__(self, dataset: Dataset) -> None:
         self.dataset = dataset
         self.n = dataset.number_of_sample
@@ -80,6 +80,6 @@ class kll:
             wp = np.vstack((wp, s))
         self.c = c
         # line 14 algorithm 3
-        kpp_ = kpp(Dataset(np.array(c)))
+        kpp_ = KPP(Dataset(np.array(c)))
 
         return kpp_.fit(self.K, wp)

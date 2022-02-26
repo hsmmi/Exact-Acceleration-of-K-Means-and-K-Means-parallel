@@ -4,7 +4,7 @@ from tools import distance, new_seed, execution_time
 
 
 # algorithm 1 K-Means++
-class kpp:
+class KPP:
     def __init__(self, dataset: Dataset) -> None:
         self.dataset = dataset
         self.n = dataset.number_of_sample

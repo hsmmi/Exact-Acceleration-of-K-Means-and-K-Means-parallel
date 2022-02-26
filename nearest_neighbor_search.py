@@ -81,7 +81,7 @@ class NNS:
             id_p (tuple): is a point
 
         Returns:
-            tau (float)
+            tau (float), id (tuple)
         """
         # line 12 - 14 algorithm 4
         if tau < tau_p:
@@ -95,6 +95,7 @@ class NNS:
         r = euclidean(p, q)
         # line 17 algorithm 4
         tau, id = self.best(tau, r, q, p)
+
         # line 18 algorithm 4
         m = (self.tree.left_max + self.tree.right_min) / 2
         # line 19 algorithm 4
@@ -103,12 +104,13 @@ class NNS:
         if self.search(r, tau, low):
             tau_p, id_p = self.get_child(low).nearest(q, tau)
             tau, id = self.best(tau, tau_p, id, id_p)
+
         # line 23 - 25 algorithm 4
         if self.search(r, tau, not low):
             tau_p, id_p = self.get_child(not low).nearest(q, tau)
             tau, id = self.best(tau, tau_p, id, id_p)
         # line 26 algorithm 4
-        return tau, id[1]
+        return tau, id
 
     # line 27 algorithm 4
     def nearest_in_range(self, q: np.ndarray, max_range: float):
@@ -124,4 +126,5 @@ class NNS:
             ret[1] is id of nearest point
         """
         # line 28 algorithm 4
-        return self.nearest((q, -1), max_range)
+        tau, id = self.nearest((q, -1), max_range)
+        return tau, id[1]

@@ -1,11 +1,11 @@
-from kpp import kpp
+from kpp import KPP
 from nearest_neighbor_search import NNS
 from tools import distance, new_seed
 import numpy as np
 from dataset import Dataset
 
 
-class AKPP:
+class AKLL:
     def __init__(self, dataset: Dataset) -> None:
         self.X = dataset.sample
         self.n = dataset.number_of_sample
@@ -23,12 +23,23 @@ class AKPP:
         L: int,
         sample_weight: np.ndarray = None,
     ):
+        """Find K initial seeds for k-means algorithm
+        We'll find seed with Accelerated K-Means|| methon
+
+        Assert:
+            K < R x L
+        """
         assert (
             number_of_cluster < self.n
         ), "number of cluster is greater than number of sample"
         self.K = number_of_cluster
         assert R > 0, "Number of round(R) shoud be greater than 0"
+        self.R = R
         assert L > 0, "Number of round(L) shoud be greater than 0"
+        self.L = L
+        assert (
+            R * L > number_of_cluster
+        ), "RxL shoulf be greater than number of cluster"
 
         self.c = np.empty((0, self.d))
 
@@ -48,16 +59,20 @@ class AKPP:
         k_pre, k = -1, 0
         # line 4 algorithm 2
         for r in range(R):
-            # line 5 algorithm 2
-            C = NNS(
-                self.c[k_pre + 1 : k + 1],
-                np.arange(start=k_pre + 1, stop=k + 1),
-            )
-            # line 6 - 9 algorithm 2
-            for i in range(self.n):
-                dis, j = C.nearest_in_range(self.X[i], alpha[i])
-                if j >= 0:
-                    alpha[i] = dis
+            if k - (k_pre + 1) + 1 > 0:  # we create center in previous round
+                # line 5 algorithm 2
+                print(
+                    f"int round {r} new centers are\n{self.c[k_pre + 1 : k + 1]}\n\n"
+                )
+                C = NNS(
+                    self.c[k_pre + 1 : k + 1],
+                    np.arange(start=k_pre + 1, stop=k + 1),
+                )
+                # line 6 - 9 algorithm 2
+                for i in range(self.n):
+                    dis, j = C.nearest_in_range(self.X[i], alpha[i])
+                    if j >= 0:
+                        alpha[i] = dis
             # line 10 algorithm 2
             k_pre = k
             Z = np.sum(self.w * (alpha**2))
@@ -83,4 +98,6 @@ class AKPP:
             w_p = np.vstack((w_p, sum_w_p_i))
 
         # line 15 algorithm 2
-        return kpp(self.K, self.c, w_p)
+        dataset_center = Dataset(self.c)
+        kpp = KPP(dataset_center)
+        return kpp.fit(self.K, w_p)
