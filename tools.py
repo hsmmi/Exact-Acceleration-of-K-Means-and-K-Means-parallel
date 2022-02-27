@@ -28,10 +28,10 @@ def db_init():
     return True
 
 
-def show_log():
+def get_log():
     try:
         db = pickledb.load('log.db', False)
-        print(f"number of computations: {db.get('c_sum')}")
+        return db.get('computations'), db.get('c_sum')
     except Exception as e:
         print(e)
 
