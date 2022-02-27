@@ -6,11 +6,14 @@ import pickledb
 
 def tlogger(f):
     def wrapped(*args, **kwargs):
-        x = args[0].shape[0]
-        y = args[1].shape[0]
-        num_of_computations = x*y
-        wrapped.sum += num_of_computations
+        if type(args[0]) == tuple:
+            wrapped.sum += 1
+        else:
+            x = args[0].shape[0]
+            y = args[1].shape[0]
+            wrapped.sum += x * y
         return f(*args, **kwargs)
+
     wrapped.sum = 0
     return wrapped
 
@@ -21,28 +24,29 @@ def logger(f):
     def wrap(*args, **kw):
         x = args[0].shape[0]
         y = args[1].shape[0]
-        num_of_computations = x*y
-        db = pickledb.load('log.db', False)
-        db.set('c_sum', db.get('c_sum')+num_of_computations)
-        c = db.get('computations')
-        db.set('computations', [*c, num_of_computations])
+        num_of_computations = x * y
+        db = pickledb.load("log.db", False)
+        db.set("c_sum", db.get("c_sum") + num_of_computations)
+        c = db.get("computations")
+        db.set("computations", [*c, num_of_computations])
         db.dump()
         return f(*args, **kw)
+
     return wrap
 
 
 def db_init():
-    db = pickledb.load('log.db', False)
-    db.set('computations', [])
-    db.set('c_sum', 0)
+    db = pickledb.load("log.db", False)
+    db.set("computations", [])
+    db.set("c_sum", 0)
     db.dump()
     return True
 
 
 def get_log():
     try:
-        db = pickledb.load('log.db', False)
-        return db.get('computations'), db.get('c_sum')
+        db = pickledb.load("log.db", False)
+        return db.get("computations"), db.get("c_sum")
     except Exception as e:
         print(e)
 

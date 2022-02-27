@@ -22,7 +22,7 @@ class KLL:
         self,
         K: int,
         R: int = 5,
-        L: int = 1,
+        L: int = None,
         w: np.ndarray = None,
     ) -> np.ndarray:
 
