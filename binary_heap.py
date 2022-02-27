@@ -15,7 +15,9 @@ class BinaryHeap:
         heapq.heapify(self.heap)
 
     def push(self, value: int, index: int):
-        """Build binary heap tree
+        """Add node to binary heap tree
+
+        Add node (value, index) to the tree in O(log n)
 
         Args:
             index (int): index of value
@@ -26,7 +28,8 @@ class BinaryHeap:
     def pop(self):
         """Pop the minimum value
 
-        Pop the node with minimum value(root) from tree and remove the node
+        Pop the node with minimum value(root) from tree
+        and remove the node O(log n)
 
         Returns:
             value (float): The minimum value in tree
@@ -37,7 +40,7 @@ class BinaryHeap:
         """Peek the minimum value
 
         Peek the node with minimum value(root) from tree but node
-        still is in tree
+        still is in tree O(1)
 
         Returns:
             value (float): The minimum value in tree

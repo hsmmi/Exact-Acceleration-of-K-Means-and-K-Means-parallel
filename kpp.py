@@ -37,24 +37,24 @@ class KPP:
             self.n.shape[0] == self.w.shape[0]
         ), "size weights should be nx1(number of sample"
 
-        # line 1 algorithm 1
+        # Line 1 algorithm 1
         beta = self.w / np.sum(self.w)
-        # line 2 algorithm 1
+        # Line 2 algorithm 1
         m = np.vstack((self.m, new_seed(self.X, 1, beta)))
-        # line 3 algorithm 1
+        # Line 3 algorithm 1
         alpha = np.array([np.inf] * self.n).reshape((-1, 1))
         k = 1
-        # line 4 algorithm 1
+        # Line 4 algorithm 1
         while k < self.K:
-            # line 5,6 algorithm 1
+            # Line 5,6 algorithm 1
             alpha = np.minimum(alpha, distance(self.X, m[k - 1]))
-            # line 7,8 algorithm 1
+            # Line 7,8 algorithm 1
             t = self.w * (alpha**2)
             beta = t / np.sum(t)
-            # line 9 algorithm 1
+            # Line 9 algorithm 1
             k += 1
-            # line 10 algorithm 1
+            # Line 10 algorithm 1
             m = np.vstack((m, new_seed(self.X, 1, beta)))
-        # line 11 algorithm 1
+        # Line 11 algorithm 1
         self.m = m
         return np.array(m)

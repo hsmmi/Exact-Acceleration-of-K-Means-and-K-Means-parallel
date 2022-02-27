@@ -64,25 +64,25 @@ class KLL:
         ), "size weights should be nx1(number of sample"
 
         self.w = self.w.reshape((-1, 1))
-        # line 1 algorithm 3
+        # Line 1 algorithm 3
         beta = self.w / np.sum(self.w)
-        # line 2 algorithm 3
+        # Line 2 algorithm 3
         self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
-        # line 3 algorithm 3
+        # Line 3 algorithm 3
         alpha = np.full((self.n, 1), np.inf)
         k = 0
         k_p = -1
-        # line 4,5,6 algorithm 3
+        # Line 4,5,6 algorithm 3
         for r in range(self.R):
             for i in range(self.n):
                 for j in range(k_p + 1, k + 1):
-                    # line 7 algorithm 3
+                    # Line 7 algorithm 3
                     alpha[i] = min(alpha[i], distance(self.X[i], self.c[j]))
 
-            # line 8,9 algorithm 3
+            # Line 8,9 algorithm 3
             k_p = k
             Z = np.sum(self.w * (alpha**2))
-            # line 10,11,12 algorithm 3
+            # Line 10,11,12 algorithm 3
             for i in range(self.n):
                 p = min(1, self.L * self.w[i] * (alpha[i] ** 2) / Z)
                 if p > np.random.rand(1)[0]:
@@ -90,7 +90,7 @@ class KLL:
                     self.c = np.vstack((self.c, self.X[i]))
                     alpha[i] = 0
 
-        # line 13 algorithm 3
+        # Line 13 algorithm 3
         w_p = np.empty((0, 1))
 
         dist_center_point = distance(self.c, self.X)
@@ -101,7 +101,7 @@ class KLL:
                     sum_w_p_i += self.w[j]
             w_p = np.vstack((w_p, sum_w_p_i))
 
-        # line 14 algorithm 3
+        # Line 14 algorithm 3
         kpp_ = KPP(Dataset(self.c))
 
         return kpp_.fit(self.K, w_p)
