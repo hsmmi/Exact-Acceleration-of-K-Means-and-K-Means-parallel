@@ -1,8 +1,42 @@
 import numpy as np
 from functools import wraps
 from time import time
+import pickledb
 
 
+def logger(f):
+    #  computations logger
+    @wraps(f)
+    def wrap(*args, **kw):
+        x = args[0].shape[0]
+        y = args[1].shape[0]
+        num_of_computations = x*y
+        db = pickledb.load('log.db', False)
+        db.set('c_sum', db.get('c_sum')+num_of_computations)
+        c = db.get('computations')
+        db.set('computations', [*c, num_of_computations])
+        db.dump()
+        return f(*args, **kw)
+    return wrap
+
+
+def db_init():
+    db = pickledb.load('log.db', False)
+    db.set('computations', [])
+    db.set('c_sum', 0)
+    db.dump()
+    return True
+
+
+def show_log():
+    try:
+        db = pickledb.load('log.db', False)
+        print(f"number of computations: {db.get('c_sum')}")
+    except Exception as e:
+        print(e)
+
+
+@logger
 def distance(X: np.ndarray, Y: np.ndarray):
     """
     Parameters:
