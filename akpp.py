@@ -1,4 +1,3 @@
-from collections import deque
 from tools import distance, execution_time
 import numpy as np
 from binary_heap import BinaryHeap
@@ -46,8 +45,8 @@ class AKPP:
         # Line 6 algorithm 2
         for k in range(self.K - 1):
             # Line 7 & 8 algorithm 2
-            # Distance of last center to prevous centers
-            gamma = distance(self.m[-1], self.m[:-1])
+            # Distance of prevous centers to last center (k-1)x1
+            gamma = distance(self.m, self.m[-1])
             # Line 9 algorithm 2
             for i in range(self.n):
                 # Line 10 & 11 algorithm 2
@@ -66,7 +65,7 @@ class AKPP:
                     # so it become dirty and we should update it later
                     dirty[i] = True
             # Line 15 - 18 algorithm 2
-            S = deque()
+            S = []
             # We only need reprioritize untill we find clean node
             # because all the nodes after that not have a chance to
             # be the highest piority because the piority only decrease
@@ -77,8 +76,10 @@ class AKPP:
                 S.append(i)
             # Line 19 - 21 algorithm 2
             # Now we reprioritize all the nodes in queue and make them clean
-            for i in S:
-                Q.push(landa[i] / (self.w[i] * (alpha[i] ** 2)), i)
+            piority = np.divide(landa[S], (self.w[S] * (alpha[S] ** 2)))
+            piority[np.isnan(piority)] = np.inf
+            for indx, i in enumerate(S):
+                Q.push(piority[indx], i)
                 dirty[i] = False
             # Line 22 algorithm 2
             # Select next mean with highest piority

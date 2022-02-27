@@ -60,7 +60,7 @@ class KLL:
         else:
             self.w = w.reshape((-1, 1))
         assert (
-            self.n.shape[0] == self.w.shape[0]
+            self.n == self.w.shape[0]
         ), "size weights should be nx1(number of sample"
 
         self.w = self.w.reshape((-1, 1))

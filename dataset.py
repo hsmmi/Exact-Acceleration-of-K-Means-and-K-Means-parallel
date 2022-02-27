@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
 
+from tools import execution_time
+
 
 class Dataset:
+    @execution_time
     def __init__(self, file: str or np.ndarray = None):
         """Just create all the needed variables
 
