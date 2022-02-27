@@ -15,34 +15,57 @@ class KLL:
         self.K = None
         self.R = None
         self.L = None
+        self.w = None
 
     @execution_time
     def fit(
         self,
-        number_of_cluster: int,
-        rounds: int = 5,
-        oversampling_factor: int = 1,
-        sample_weight: np.ndarray = None,
+        K: int,
+        R: int = 5,
+        L: int = 1,
+        w: np.ndarray = None,
     ) -> np.ndarray:
 
-        self.c = np.empty((0, self.d))
-        self.K = number_of_cluster
-        self.R = rounds
-        self.L = oversampling_factor
+        """Find K initial seeds for k-means algorithm
+        We'll find seed with K-Means|| methon
 
-        assert self.R > 0 and self.L > 0, "invalid function parameter"
+        Assert:
+            K < R x L
+
+        Args:
+            K (int): number of cluseter
+            R (int): number of round(s) (default = 5)
+            L (int): size of oversampling (default = 2xK)
+            w (ndarray): nx1 ndarray for weights of n sample (default 1)
+
+        Returns:
+            Initial K seed(s)
+        """
         assert (
-            self.n > self.K and self.K > 0
-        ), "number of cluster should be in range [1,n)"
+            K < self.n
+        ), "number of cluster(K) is greater than number of sample"
+        self.K = K
+        assert R > 0, "Number of round(R) shoud be greater than 0"
+        self.R = R
+        if L is None:
+            L = 2 * self.K
+        assert L > 0, "Number of round(L) shoud be greater than 0"
+        self.L = L
+        assert R * L > K, "RxL shoulf be greater than number of cluster"
 
-        if sample_weight is not None:
-            self.sample_weight = np.array(sample_weight)
+        self.c = np.empty((0, self.d))
+
+        if w is None:
+            self.w = np.ones((self.n, 1))
         else:
-            self.sample_weight = np.ones(self.n)
+            self.w = w.reshape((-1, 1))
+        assert (
+            self.n.shape[0] == self.w.shape[0]
+        ), "size weights should be nx1(number of sample"
 
-        self.sample_weight = self.sample_weight.reshape((-1, 1))
+        self.w = self.w.reshape((-1, 1))
         # line 1 algorithm 3
-        beta = self.sample_weight / np.sum(self.sample_weight)
+        beta = self.w / np.sum(self.w)
         # line 2 algorithm 3
         self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
         # line 3 algorithm 3
@@ -58,12 +81,10 @@ class KLL:
 
             # line 8,9 algorithm 3
             k_p = k
-            Z = np.sum(self.sample_weight * (alpha**2))
+            Z = np.sum(self.w * (alpha**2))
             # line 10,11,12 algorithm 3
             for i in range(self.n):
-                p = min(
-                    1, self.L * self.sample_weight[i] * (alpha[i] ** 2) / Z
-                )
+                p = min(1, self.L * self.w[i] * (alpha[i] ** 2) / Z)
                 if p > np.random.rand(1)[0]:
                     k += 1
                     self.c = np.vstack((self.c, self.X[i]))
@@ -77,7 +98,7 @@ class KLL:
             sum_w_p_i = 0
             for j in range(self.n):
                 if dist_center_point[i, j] == alpha[j]:
-                    sum_w_p_i += self.sample_weight[j]
+                    sum_w_p_i += self.w[j]
             w_p = np.vstack((w_p, sum_w_p_i))
 
         # line 14 algorithm 3

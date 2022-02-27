@@ -19,35 +19,47 @@ class AKLL:
     @execution_time
     def fit(
         self,
-        number_of_cluster: int,
-        R: int,
-        L: int,
-        sample_weight: np.ndarray = None,
-    ):
+        K: int,
+        R: int = 5,
+        L: int = None,
+        w: np.ndarray = None,
+    ) -> np.ndarray:
         """Find K initial seeds for k-means algorithm
         We'll find seed with Accelerated K-Means|| methon
 
         Assert:
             K < R x L
+
+        Args:
+            K (int): number of cluseter
+            R (int): number of round(s) (default = 5)
+            L (int): size of oversampling (default = 2xK)
+            w (ndarray): nx1 ndarray for weights of n sample (default 1)
+
+        Returns:
+            Initial K seed(s)
         """
         assert (
-            number_of_cluster < self.n
-        ), "number of cluster is greater than number of sample"
-        self.K = number_of_cluster
+            K < self.n
+        ), "number of cluster(K) is greater than number of sample"
+        self.K = K
         assert R > 0, "Number of round(R) shoud be greater than 0"
         self.R = R
+        if L is None:
+            L = 2 * self.K
         assert L > 0, "Number of round(L) shoud be greater than 0"
         self.L = L
-        assert (
-            R * L > number_of_cluster
-        ), "RxL shoulf be greater than number of cluster"
+        assert R * L > K, "RxL shoulf be greater than number of cluster"
 
         self.c = np.empty((0, self.d))
 
-        if sample_weight is None:
+        if w is None:
             self.w = np.ones((self.n, 1))
         else:
-            self.w = sample_weight.reshape((-1, 1))
+            self.w = w.reshape((-1, 1))
+        assert (
+            self.n.shape[0] == self.w.shape[0]
+        ), "size weights should be nx1(number of sample"
 
         # line 1 algorithm 5
         beta = self.w / np.sum(self.w)

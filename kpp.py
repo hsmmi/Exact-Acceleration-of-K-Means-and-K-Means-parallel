@@ -14,23 +14,30 @@ class KPP:
         self.K = None
 
     @execution_time
-    def fit(
-        self, number_of_cluster: int, sample_weight: np.ndarray = None
-    ) -> np.ndarray:
+    def fit(self, K: int, w: np.ndarray = None) -> np.ndarray:
+        """Find K initial seeds for k-means algorithm
+        We'll find seed with Accelerated K-Means++ methon
 
+        Args:
+            K (int): number of cluseter
+            w (ndarray): nx1 ndarray for weights of n sample (default 1)
+
+        Returns:
+            Initial K seed(s)
+        """
+        assert K < self.n, "number of cluster is greater than number of sample"
+        self.K = K
         self.m = np.empty((0, self.d))
-        self.K = number_of_cluster
-        assert (
-            self.n > self.K and self.K > 0
-        ), "number of cluster should be in range [1,n)"
-
-        if sample_weight is not None:
-            self.sample_weight = np.array(sample_weight)
+        if w is None:
+            self.w = np.ones((self.n, 1))
         else:
-            self.sample_weight = np.ones(self.n)
-        self.sample_weight = self.sample_weight.reshape((-1, 1))
+            self.w = w.reshape((-1, 1))
+        assert (
+            self.n.shape[0] == self.w.shape[0]
+        ), "size weights should be nx1(number of sample"
+
         # line 1 algorithm 1
-        beta = self.sample_weight / np.sum(self.sample_weight)
+        beta = self.w / np.sum(self.w)
         # line 2 algorithm 1
         m = np.vstack((self.m, new_seed(self.X, 1, beta)))
         # line 3 algorithm 1
@@ -41,7 +48,7 @@ class KPP:
             # line 5,6 algorithm 1
             alpha = np.minimum(alpha, distance(self.X, m[k - 1]))
             # line 7,8 algorithm 1
-            t = self.sample_weight * (alpha**2)
+            t = self.w * (alpha**2)
             beta = t / np.sum(t)
             # line 9 algorithm 1
             k += 1
