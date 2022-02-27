@@ -12,11 +12,12 @@ class KPP:
         self.X = dataset.sample
         self.m = None
         self.K = None
+        self.w = None
 
     @execution_time
     def fit(self, K: int, w: np.ndarray = None) -> np.ndarray:
         """Find K initial seeds for k-means algorithm
-        We'll find seed with Accelerated K-Means++ methon
+        We'll find seed with K-Means++ methon
 
         Args:
             K (int): number of cluseter
