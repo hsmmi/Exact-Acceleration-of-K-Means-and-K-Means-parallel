@@ -4,6 +4,17 @@ from time import time
 import pickledb
 
 
+def tlogger(f):
+    def wrapped(*args, **kwargs):
+        x = args[0].shape[0]
+        y = args[1].shape[0]
+        num_of_computations = x*y
+        wrapped.sum += num_of_computations
+        return f(*args, **kwargs)
+    wrapped.sum = 0
+    return wrapped
+
+
 def logger(f):
     #  computations logger
     @wraps(f)
@@ -36,7 +47,7 @@ def get_log():
         print(e)
 
 
-@logger
+@tlogger
 def distance(X: np.ndarray, Y: np.ndarray):
     """
     Parameters:
