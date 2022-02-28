@@ -25,7 +25,7 @@ class AKLL:
         w: np.ndarray = None,
     ) -> np.ndarray:
         """Find K initial seeds for k-means algorithm
-        We'll find seed with Accelerated K-Means|| methon
+        We'll find seed with Accelerated K-Means|| method
 
         Assert:
             K < R x L
@@ -59,7 +59,7 @@ class AKLL:
             self.w = w.reshape((-1, 1))
         assert (
             self.n == self.w.shape[0]
-        ), "size weights should be nx1(number of sample"
+        ), "size weights should be nx1(number of sample)"
 
         # Line 1 algorithm 5
         # Probability to select next center
@@ -81,7 +81,7 @@ class AKLL:
                 # Biuld VPTree from our centers created in previous round
                 # with their index
                 C = NNS(
-                    self.c[k_pre + 1 : k + 1],
+                    self.c[k_pre + 1: k + 1],
                     np.arange(start=k_pre + 1, stop=k + 1),
                 )
                 # Line 6 - 9 algorithm 5

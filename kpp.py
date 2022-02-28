@@ -17,7 +17,7 @@ class KPP:
     @execution_time
     def fit(self, K: int, w: np.ndarray = None) -> np.ndarray:
         """Find K initial seeds for k-means algorithm
-        We'll find seed with K-Means++ methon
+        We'll find seed with K-Means++ method
 
         Args:
             K (int): number of cluseter
@@ -35,25 +35,32 @@ class KPP:
             self.w = w.reshape((-1, 1))
         assert (
             self.n == self.w.shape[0]
-        ), "size weights should be nx1(number of sample"
+        ), "size weights should be nx1(number of sample)"
 
         # Line 1 algorithm 1
+        # Probability to select next center
         beta = self.w / np.sum(self.w)
         # Line 2 algorithm 1
+        # Select first center with probabiliry beta
         m = np.vstack((self.m, new_seed(self.X, 1, beta)))
         # Line 3 algorithm 1
-        alpha = np.array([np.inf] * self.n).reshape((-1, 1))
+        # Distance to closest mean
+        alpha = np.full((self.n, 1), np.inf)
+        # k always point to last center
         k = 1
         # Line 4 algorithm 1
         while k < self.K:
             # Line 5,6 algorithm 1
+            # Update alpha
             alpha = np.minimum(alpha, distance(self.X, m[k - 1]))
             # Line 7,8 algorithm 1
+            # Update probability to select new center
             t = self.w * (alpha**2)
             beta = t / np.sum(t)
             # Line 9 algorithm 1
             k += 1
             # Line 10 algorithm 1
+            # Select new center with probabiliry beta
             m = np.vstack((m, new_seed(self.X, 1, beta)))
         # Line 11 algorithm 1
         self.m = m

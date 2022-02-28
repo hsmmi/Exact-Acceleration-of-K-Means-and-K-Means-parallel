@@ -26,7 +26,7 @@ class KLL:
         w: np.ndarray = None,
     ) -> np.ndarray:
         """Find K initial seeds for k-means algorithm
-        We'll find seed with K-Means|| methon
+        We'll find seed with K-Means|| method
 
         Assert:
             K < R x L
@@ -60,7 +60,7 @@ class KLL:
             self.w = w.reshape((-1, 1))
         assert (
             self.n == self.w.shape[0]
-        ), "size weights should be nx1(number of sample"
+        ), "size weights should be nx1(number of sample)"
 
         self.w = self.w.reshape((-1, 1))
         # Line 1 algorithm 3
