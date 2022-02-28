@@ -29,6 +29,7 @@ class AKPP:
         # Line 2 algorithm 2
         # Priority queue using a standard binary heap
         # highest priority (smallest values)
+        # Build in O(log n)
         Q = BinaryHeap(landa / self.w)
         # Line 3 algorithm 2
         # The item has a higher priority than it actually should
@@ -76,6 +77,8 @@ class AKPP:
                 S.append(i)
             # Line 19 - 21 algorithm 2
             # Now we reprioritize all the nodes in queue and make them clean
+            # If all the nodes was dirty now we use another O(log n) to
+            # build a binary heap tree
             piority = np.divide(landa[S], (self.w[S] * (alpha[S] ** 2)))
             piority[np.isnan(piority)] = np.inf
             for indx, i in enumerate(S):

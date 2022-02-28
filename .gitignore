@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # my files
-**/test.py
+**/test*
 **/.DS_Store
 private
 .vscode

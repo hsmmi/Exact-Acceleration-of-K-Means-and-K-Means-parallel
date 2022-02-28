@@ -2,6 +2,7 @@ import numpy as np
 from functools import wraps
 from time import time
 import pickledb
+from scipy.spatial.distance import cdist
 
 
 def tlogger(f):
@@ -9,6 +10,10 @@ def tlogger(f):
         if type(args[0]) == tuple:
             wrapped.sum += 1
         else:
+            if len(args[0].shape) == 1:
+                args = (args[0].reshape((1, -1)), args[1])
+            if len(args[1].shape) == 1:
+                args = (args[0], args[1].reshape((1, -1)))
             x = args[0].shape[0]
             y = args[1].shape[0]
             wrapped.sum += x * y
@@ -53,7 +58,7 @@ def get_log():
 
 @tlogger
 def distance(X: np.ndarray, Y: np.ndarray):
-    """
+    """Using numpy to find distance of each pair (x, y)
     Parameters:
         X: nxd data(s)
         Y: mxd point(s)
@@ -70,6 +75,26 @@ def distance(X: np.ndarray, Y: np.ndarray):
         len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
     ), "y should be in X space"
     return np.linalg.norm((X[:, np.newaxis, :] - Y), axis=-1)
+
+
+def distance2(X: np.ndarray, Y: np.ndarray):
+    """Using scipy to find distance of each pair (x, y)
+    Parameters:
+        X: nxd data(s)
+        Y: mxd point(s)
+
+    Returns:
+        d: nxm ndarray contain distance of data to each point
+    """
+    if len(X.shape) == 1:
+        X = X.reshape((1, -1))
+    if len(Y.shape) == 1:
+        Y = Y.reshape((1, -1))
+    assert len(X.shape) == 2, "X should be nxd ndarray"
+    assert (
+        len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
+    ), "y should be in X space"
+    return cdist(X, Y)
 
 
 def new_seed(X, L, probability):
