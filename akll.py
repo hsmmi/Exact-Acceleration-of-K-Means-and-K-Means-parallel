@@ -62,13 +62,16 @@ class AKLL:
         ), "size weights should be nx1(number of sample"
 
         # Line 1 algorithm 5
+        # Probability to select next center
         beta = self.w / np.sum(self.w)
         # Line 2 algorithm 5
+        # Select first center with probabiliry beta
         self.c = np.vstack((self.c, new_seed(self.X, 1, beta)))
         # Line 3 algorithm 5
+        # alpha: Distance to closest mean
+        alpha = np.full((self.n, 1), np.inf)
         # In each iteration new centers are in c(k_pre, k]
         # k always point to last center
-        alpha = np.full((self.n, 1), np.inf)
         k_pre, k = -1, 0
         # Line 4 algorithm 5
         for r in range(R):

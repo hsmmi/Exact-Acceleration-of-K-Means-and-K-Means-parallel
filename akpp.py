@@ -25,6 +25,7 @@ class AKPP:
         else:
             self.w = sample_weight.reshape((-1, 1))
         # Line 1 algorithm 2
+        # Using landa for randomnes
         landa = np.random.exponential(scale=1, size=(self.n, 1))
         # Line 2 algorithm 2
         # Priority queue using a standard binary heap

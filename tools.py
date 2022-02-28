@@ -58,26 +58,6 @@ def get_log():
 
 @tlogger
 def distance(X: np.ndarray, Y: np.ndarray):
-    """Using numpy to find distance of each pair (x, y)
-    Parameters:
-        X: nxd data(s)
-        Y: mxd point(s)
-
-    Returns:
-        d: nxm ndarray contain distance of data to each point
-    """
-    if len(X.shape) == 1:
-        X = X.reshape((1, -1))
-    if len(Y.shape) == 1:
-        Y = Y.reshape((1, -1))
-    assert len(X.shape) == 2, "X should be nxd ndarray"
-    assert (
-        len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
-    ), "y should be in X space"
-    return np.linalg.norm((X[:, np.newaxis, :] - Y), axis=-1)
-
-
-def distance2(X: np.ndarray, Y: np.ndarray):
     """Using scipy to find distance of each pair (x, y)
     Parameters:
         X: nxd data(s)
@@ -95,6 +75,26 @@ def distance2(X: np.ndarray, Y: np.ndarray):
         len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
     ), "y should be in X space"
     return cdist(X, Y)
+
+
+def distance2(X: np.ndarray, Y: np.ndarray):
+    """Using numpy to find distance of each pair (x, y)
+    Parameters:
+        X: nxd data(s)
+        Y: mxd point(s)
+
+    Returns:
+        d: nxm ndarray contain distance of data to each point
+    """
+    if len(X.shape) == 1:
+        X = X.reshape((1, -1))
+    if len(Y.shape) == 1:
+        Y = Y.reshape((1, -1))
+    assert len(X.shape) == 2, "X should be nxd ndarray"
+    assert (
+        len(Y.shape) == 2 and Y.shape[1] == X.shape[1]
+    ), "y should be in X space"
+    return np.linalg.norm((X[:, np.newaxis, :] - Y), axis=-1)
 
 
 def new_seed(X, L, probability):
