@@ -75,42 +75,77 @@ class AKLL:
         k_pre, k = -1, 0
         # Line 4 algorithm 5
         for r in range(R):
-            if k - (k_pre + 1) + 1 > 0:  # we create center in previous round
+            # Do we create center in previous round?
+            if k - (k_pre + 1) + 1 > 0:
                 # Line 5 algorithm 5
+                # Biuld VPTree from our centers created in previous round
+                # with their index
                 C = NNS(
                     self.c[k_pre + 1 : k + 1],
                     np.arange(start=k_pre + 1, stop=k + 1),
                 )
                 # Line 6 - 9 algorithm 5
+                # For each sample
                 for i in range(self.n):
+                    # Find closest center in centers created in previous round
+                    # in range alpha[i] to update alpha[i]
                     dis, j = C.nearest_in_range(self.X[i], alpha[i])
+                    # Was there a center closer than alpha[i]
+                    # If yes j has it's index and distance
+                    # in dis otherwise j is -1
                     if j >= 0:
                         alpha[i] = dis
             # Line 10 algorithm 5
+            # Now we want to create new centers
+            # So now our next last previous center
+            # is k which is current last center
             k_pre = k
+            # Normalize the probability of selection
             Z = np.sum(self.w * (alpha**2))
             # Line 11 algorithm 5
             for i in range(self.n):
+                # Expect to select L new centers
                 p = min(1, self.L * self.w[i] * (alpha[i] ** 2) / Z)
                 # Line 12 algorithm 5
+                # Is point selected as center?
                 if p > np.random.rand(1)[0]:
-                    # X[i] become new center
                     # Line 14 algorithm 5
+                    # X[i] become new center
                     k = k + 1
                     self.c = np.vstack((self.c, self.X[i]))
+                    # Now distance this point to closest center is zere(itself)
+                    # As alpha[i] become zero the probability of selecting this
+                    # point in next round gets zero so each point select once
                     alpha[i] = 0
 
         # Line 14 algorithm 5
+        # Now we have aound 2xKxR centers and should select K of them
+        # as initial seeds and we do it with K-means++ algorithm
+        # as set weights of each center to sum of wight of points
+        # that are assign to this center and store it in w_p
         w_p = np.empty((0, 1))
+        # To find if a point assign to a center we should find distances
+        # between all pairs of center and point then if distance of point[j]
+        # to the center[i] be equal to alpha[j] then we know that the closest
+        # center to point[j] is center[i]
         dist_center_point = distance(self.c, self.X)
+        # For each center
         for i in range(self.c.shape[0]):
+            # Initial the weights for this center to zero
             sum_w_p_i = 0
+            # For each point
             for j in range(self.n):
+                # If distance of closest center to our point(alpha[j]) is
+                # equal to distance this center to our point the this center
+                # is the closest center and we add weight of this point to
+                # our center to have more chance to select in k-means++
                 if dist_center_point[i, j] == alpha[j]:
                     sum_w_p_i += self.w[j]
             w_p = np.vstack((w_p, sum_w_p_i))
 
         # Line 15 algorithm 5
+        # Create dataset for our centers
         dataset_center = Dataset(self.c)
         kpp = KPP(dataset_center)
+        # Select K centers from our many centers (around 2xKxR)
         return kpp.fit(self.K, w_p)
