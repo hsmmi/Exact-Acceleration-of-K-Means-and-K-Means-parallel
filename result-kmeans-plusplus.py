@@ -42,13 +42,14 @@ x_axis = (2**k).astype(str)
 
 distance_reduction = np.divide(kpp_log, akpp_log)
 log_distance_reduction = np.log(distance_reduction)
+plt.figure(facecolor="white", figsize=(6, 4))
 plt.plot(x_axis, log_distance_reduction, ".-", label=dataset_name)
 plt.xlabel("K")
-plt.ylabel("log2 ditance computation ratio")
-plt.title("Distace computation")
+plt.ylabel("log2(ditance computation ratio)")
+plt.title(f"Distace computation ratio {dataset_name}")
 plt.legend(loc="best")
 plt.savefig(
-    f"report/{uid}_Distace_computation_{dataset_name}_k_{start_range}-{end_range-1}"
+    f"report/{uid}_kmeans_plusplus_{dataset_name}_Distace_computation_k_{start_range}-{end_range-1}"
 )
 plt.show()
 df = pd.DataFrame(
@@ -56,7 +57,7 @@ df = pd.DataFrame(
     columns=["distance_reduction", "log_distance_reduction"],
 )
 df.to_csv(
-    f"report/{uid}_log_kmeans_plusplus_{dataset_name}_k_{start_range}-{end_range-1}.csv",
+    f"report/{uid}_kmeans_plusplus_{dataset_name}_log_k_{start_range}-{end_range-1}.csv",
     index=False,
     encoding="utf-8-sig",
 )

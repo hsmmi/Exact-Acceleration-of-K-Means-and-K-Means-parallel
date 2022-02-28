@@ -44,25 +44,28 @@ x_axis = (2**k).astype(str)
 
 log_kll_log = np.log(kll_log)
 log_akll_log = np.log(akll_log)
-plt.plot(x_axis, kll_log, ".-", label="kll_log")
-plt.plot(x_axis, akll_log, ".-", label="akll_log")
+plt.figure(facecolor="white", figsize=(6, 4))
+plt.plot(x_axis, log_kll_log, ".-", label="K-means||")
+plt.plot(x_axis, log_akll_log, ".-", label="Accelerated K-Means||")
 plt.xlabel("K")
-plt.ylabel("sec")
-plt.title("Runtime")
+plt.ylabel("log2(sec)")
+plt.title(f"Runtime {dataset_name}")
 plt.legend(loc="best")
 plt.savefig(
-    f"report/{uid}_Runtime_{dataset_name}_k_{start_range}-{end_range-1}"
+    f"report/{uid}_kmeans_parallel_Runtime_{dataset_name}_k_{start_range}-{end_range-1}"
 )
 plt.show()
 
 speedup_result = np.divide(kll_log, akll_log)
 log_speedup_result = np.log(speedup_result)
-plt.plot(x_axis, speedup_result, ".-")
+plt.figure(facecolor="white", figsize=(6, 4))
+plt.plot(x_axis, log_speedup_result, ".-")
 plt.xlabel("K")
-plt.ylabel("Speedup")
-plt.title("Speed comparison")
+plt.ylabel("log2(Speedup)")
+plt.title(f"Speed comparison {dataset_name}")
+plt.legend(loc="best")
 plt.savefig(
-    f"report/{uid}_Speed_comparison_{dataset_name}_k_{start_range}-{end_range-1}"
+    f"report/{uid}_kmeans_parallel_{dataset_name}_Speed_comparison_k_{start_range}-{end_range-1}"
 )
 plt.show()
 
@@ -87,7 +90,7 @@ df = pd.DataFrame(
     ],
 )
 df.to_csv(
-    f"report/{uid}_log_kmeans_parallel_{dataset_name}_{start_range}_{end_range-1}.csv",
+    f"report/{uid}_kmeans_parallel_{dataset_name}_log_k_{start_range}_{end_range-1}.csv",
     index=False,
     encoding="utf-8-sig",
 )
