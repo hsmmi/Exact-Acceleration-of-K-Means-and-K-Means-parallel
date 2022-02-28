@@ -80,9 +80,6 @@ class NNS:
     def best(self, tau: float, tau_p: float, id: tuple, id_p: tuple):
         """Which one is closer?
 
-        If low be True then return the left child otherwise
-        return the right child
-
         Args:
             tau (float): distance id from root
             tau_p (float): distance id_p from root
@@ -90,7 +87,7 @@ class NNS:
             id_p (tuple): is a point
 
         Returns:
-            tau (float), id (tuple)
+            tau (float), id (tuple): of closer point(minimum tau)
         """
         # Line 12 - 14 algorithm 4
         # Reruen closer point
