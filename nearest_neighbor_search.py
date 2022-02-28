@@ -15,12 +15,6 @@ def euclidean(p1: tuple, p2: tuple) -> float:
     return np.linalg.norm(p1[0] - p2[0])
 
 
-class Point:
-    def __init__(self, loc: np.ndarray, index: int) -> None:
-        self.loc = loc
-        self.index = index
-
-
 class NNS:
     def __init__(
         self, points: np.ndarray or vptree.VPTree, id: np.ndarray = None
