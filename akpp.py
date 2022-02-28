@@ -14,16 +14,27 @@ class AKPP:
         self.m = np.empty((0, self.d))
 
     @execution_time
-    def fit(self, number_of_cluster: int, sample_weight: np.ndarray = None):
-        assert (
-            number_of_cluster < self.n
-        ), "number of cluster is greater than number of sample"
-        self.K = number_of_cluster
+    def fit(self, K: int, w: np.ndarray = None):
+        """Find K initial seeds for k-means algorithm
+        We'll find seed with accelerated K-Means++ method
+
+        Args:
+            K (int): number of cluseter
+            w (ndarray): nx1 ndarray for weights of n sample (default 1)
+
+        Returns:
+            Initial K seed(s)
+        """
+        assert K < self.n, "number of cluster is greater than number of sample"
+        self.K = K
         self.m = np.empty((0, self.d))
-        if sample_weight is None:
+        if w is None:
             self.w = np.ones((self.n, 1))
         else:
-            self.w = sample_weight.reshape((-1, 1))
+            self.w = w.reshape((-1, 1))
+        assert (
+            self.n == self.w.shape[0]
+        ), "size weights should be nx1(number of sample"
         # Line 1 algorithm 2
         # Using landa for randomnes
         landa = np.random.exponential(scale=1, size=(self.n, 1))
